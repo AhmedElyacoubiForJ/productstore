@@ -1,6 +1,7 @@
 package ay.dev.productstore.controller;
 
 import ay.dev.productstore.models.Product;
+import ay.dev.productstore.models.ProductDto;
 import ay.dev.productstore.repo.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -23,5 +24,12 @@ public class ProductController {
         List<Product> products = repo.findAll(Sort.by(Sort.Direction.DESC, "id"));
         model.addAttribute("products", products);
         return "products/index";
+    }
+
+    @GetMapping("/create")
+    public String showCreatePage(Model model) {
+        ProductDto productDto = new ProductDto();
+        model.addAttribute("productDto", productDto);
+        return "products/CreateProduct";
     }
 }
