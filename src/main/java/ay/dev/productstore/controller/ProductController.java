@@ -4,7 +4,6 @@ import ay.dev.productstore.models.Product;
 import ay.dev.productstore.models.ProductDto;
 import ay.dev.productstore.repo.ProductRepository;
 import jakarta.validation.Valid;
-import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -175,6 +173,32 @@ public class ProductController {
             product.setDescription(productDto.getDescription());
 
             repo.save(product);
+        } catch (Exception ex) {
+            System.out.println("Exception: " + ex.getMessage());
+        }
+        return "redirect:/products";
+    }
+
+    @GetMapping("/delete")
+    public String deleteProduct(
+            @RequestParam int id
+    ) {
+
+        try {
+            // we must delete also the image from public folder
+            Product product = repo.findById(id).get();
+            // delete product image
+            Path imagePath = Paths.get("public/images/" + product.getImageFileName());
+
+            try {
+                Files.delete(imagePath);
+            } catch (Exception ex) {
+                System.out.println("Exception: " + ex.getMessage());
+            }
+
+            // delete product
+            repo.delete(product);
+
         } catch (Exception ex) {
             System.out.println("Exception: " + ex.getMessage());
         }
